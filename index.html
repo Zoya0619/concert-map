@@ -9,110 +9,175 @@
             margin: 0; padding: 0;
             background-color: #050505; color: #fff;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            overflow: hidden; height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden; /* 防止外层滚动 */
         }
 
-        /* 标题适配 */
-        .header {
-            position: absolute; top: 5vh; text-align: center; z-index: 100;
-            width: 100%; padding: 0 10px; box-sizing: border-box; pointer-events: none;
+        /* ===== 公共视图样式 ===== */
+        .view-layer {
+            position: absolute; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        /* ===== 第一层：时间轴视图 ===== */
+        #timeline-view {
+            overflow-y: auto; /* 允许时间轴上下滚动 */
+            overflow-x: hidden;
+            display: block;
+            padding-bottom: 50px;
+        }
+
+        .timeline-header {
+            text-align: center; padding: 40px 20px 20px;
+            position: relative; z-index: 10;
+            background: linear-gradient(to bottom, rgba(5,5,5,1) 60%, rgba(5,5,5,0));
         }
         h1 {
-            margin: 0; 
-            font-size: clamp(1.8rem, 6vw, 2.5rem); /* 根据屏幕大小自动调整字体 */
-            color: #fff; text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
-            letter-spacing: 2px;
+            margin: 0; font-size: clamp(1.8rem, 6vw, 2.5rem);
+            color: #fff; text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; letter-spacing: 2px;
         }
         .subtitle { color: #aaa; margin-top: 5px; font-size: clamp(0.8rem, 3vw, 1rem); }
 
-        /* 3D 舞台适配 */
+        .timeline-container {
+            position: relative; max-width: 600px; margin: 20px auto; padding: 0 20px;
+        }
+        /* 时间轴主线 */
+        .timeline-container::after {
+            content: ''; position: absolute;
+            width: 2px; background: rgba(255, 215, 0, 0.3);
+            top: 0; bottom: 0; left: 40px;
+        }
+
+        .timeline-item {
+            position: relative; margin: 30px 0; padding-left: 60px;
+            cursor: pointer; transition: transform 0.3s;
+        }
+        .timeline-item:hover { transform: translateX(10px); }
+        
+        /* 时间轴上的发光点 */
+        .timeline-item::before {
+            content: ''; position: absolute;
+            width: 16px; height: 16px; background: #ffd700;
+            border-radius: 50%; left: 33px; top: 15px;
+            box-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            z-index: 1; transition: transform 0.3s;
+        }
+        .timeline-item:hover::before { transform: scale(1.3); background: #fff; }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 15px 20px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: background 0.3s, border 0.3s;
+        }
+        .timeline-item:hover .timeline-content {
+            background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700;
+        }
+        .timeline-date { color: #ffd700; font-family: monospace; font-size: 0.9rem; margin-bottom: 5px; }
+        .timeline-artist { font-size: 1.3rem; font-weight: bold; color: #fff; }
+        .timeline-location { color: #aaa; font-size: 0.85rem; margin-top: 5px; }
+
+        /* ===== 第二层：3D 旋转视图 ===== */
+        #carousel-view {
+            display: none; /* 初始隐藏 */
+            flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; transform: scale(0.9);
+        }
+
+        .back-btn {
+            position: absolute; top: 20px; left: 20px; z-index: 200;
+            padding: 8px 20px; background: rgba(0,0,0,0.6);
+            border: 1px solid #ffd700; border-radius: 20px; color: #ffd700;
+            font-size: 0.9rem; font-weight: bold; cursor: pointer;
+            backdrop-filter: blur(5px); display: flex; align-items: center; gap: 5px;
+        }
+        .back-btn:active { background: #ffd700; color: #000; }
+
+        .carousel-header { position: absolute; top: 5vh; text-align: center; z-index: 100; width: 100%; pointer-events: none; }
+        
         .container {
             width: 100%; height: 60vh; margin-top: 5vh;
-            perspective: 1500px;
-            display: flex; align-items: center; justify-content: center;
+            perspective: 1500px; display: flex; align-items: center; justify-content: center;
         }
 
         .carousel {
-            width: 100%; height: 100%;
-            position: relative;
+            width: 100%; height: 100%; position: relative;
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        /* 卡片自适应大小 */
         .card {
             position: absolute;
-            /* 宽度：手机上占 70%，电脑上最大 300px */
-            width: clamp(220px, 70vw, 300px);
-            /* 高度：手机上占 55%，电脑上最大 400px */
-            height: clamp(320px, 55vh, 420px);
-            /* 绝对居中算法 */
-            left: 50%; top: 50%;
-            transform-origin: center;
+            width: clamp(220px, 70vw, 300px); height: clamp(320px, 55vh, 420px);
+            left: 50%; top: 50%; transform-origin: center;
             margin-left: calc(-1 * clamp(220px, 70vw, 300px) / 2);
             margin-top: calc(-1 * clamp(320px, 55vh, 420px) / 2);
-
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             overflow: hidden; display: flex; flex-direction: column;
             backface-visibility: hidden; transition: box-shadow 0.3s, border 0.3s;
         }
         .card:hover { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); border: 1px solid #ffd700; }
 
-        /* 媒体区域适配 (兼容照片和视频) */
         .card-photo {
-            width: 100%; height: 75%;
-            background-size: cover; background-position: center;
-            border-bottom: 2px solid #ffd700;
-            object-fit: cover; /* 保证视频不变形 */
+            width: 100%; height: 75%; background-size: cover; background-position: center;
+            border-bottom: 2px solid #ffd700; object-fit: cover;
         }
         .card-photo.no-photo {
             background: linear-gradient(135deg, #111 0%, #333 100%);
-            display: flex; align-items: center; justify-content: center;
-            color: #555; font-size: clamp(3em, 10vw, 5em);
+            display: flex; align-items: center; justify-content: center; color: #555; font-size: clamp(3em, 10vw, 5em);
         }
 
-        .card-info {
-            padding: 10px 15px; flex: 1;
-            display: flex; flex-direction: column; justify-content: center;
-        }
+        .card-info { padding: 10px 15px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
         .artist { font-size: clamp(1.1rem, 4vw, 1.4rem); font-weight: bold; color: #fff; margin-bottom: 5px; }
         .details { font-size: clamp(0.75rem, 3vw, 0.9rem); color: #ffd700; opacity: 0.8; }
         .date { font-family: monospace; }
 
-        /* 按钮适配 */
-        .nav-buttons {
-            position: absolute; bottom: 5vh; display: flex; gap: 20px; z-index: 100;
+        .nav-buttons { position: absolute; bottom: 5vh; display: flex; gap: 20px; z-index: 100; }
+        .nav-buttons button {
+            padding: 10px 25px; background: rgba(0,0,0,0.4); border: 1px solid #ffd700;
+            border-radius: 30px; color: #ffd700; font-size: clamp(0.9rem, 3vw, 1rem);
+            font-weight: bold; cursor: pointer; backdrop-filter: blur(5px);
         }
-        button {
-            padding: 10px 25px; background: rgba(0,0,0,0.4);
-            border: 1px solid #ffd700; border-radius: 30px;
-            color: #ffd700; font-size: clamp(0.9rem, 3vw, 1rem); font-weight: bold; cursor: pointer;
-            backdrop-filter: blur(5px);
-        }
-        button:active { background: #ffd700; color: #000; }
+        .nav-buttons button:active { background: #ffd700; color: #000; }
+        
+        /* 隐藏滚动条但保留功能 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ffd700; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>Concert Memories</h1>
-    <p class="subtitle">2023 - 2025 · 点亮了 14 场光芒</p>
+<div id="timeline-view" class="view-layer">
+    <div class="timeline-header">
+        <h1>Concert Memories</h1>
+        <p class="subtitle">2023 - 2025 · 点亮了 14 场光芒</p>
+    </div>
+    <div class="timeline-container" id="timeline-container">
+        </div>
 </div>
 
-<div class="container">
-    <div class="carousel" id="carousel"></div>
-</div>
+<div id="carousel-view" class="view-layer">
+    <button class="back-btn" onclick="showTimeline()">◀ 返回时间轴</button>
+    
+    <div class="carousel-header">
+        <h1>Concert Memories</h1>
+    </div>
 
-<div class="nav-buttons">
-    <button onclick="prevCard()">PREV</button>
-    <button onclick="nextCard()">NEXT</button>
+    <div class="container">
+        <div class="carousel" id="carousel"></div>
+    </div>
+
+    <div class="nav-buttons">
+        <button onclick="prevCard()">PREV</button>
+        <button onclick="nextCard()">NEXT</button>
+    </div>
 </div>
 
 <script>
-    // 在这里填入你的图片或视频链接 (注意扩展名 .jpg 或 .mp4)
     const concerts = [
         { date: '2023.07.08', location: '宜昌', artist: '林志炫', photo: 'phtotos/Terrylin.jpg' }, 
         { date: '2024.06.16', location: '青岛', artist: '邓紫棋', photo: 'phtotos/GEM.jpg' },
@@ -130,23 +195,44 @@
         { date: '2025.09.27', location: '北京', artist: '胡夏', photo: '' }
     ];
 
+    const timelineContainer = document.getElementById('timeline-container');
     const carousel = document.getElementById('carousel');
+    const timelineView = document.getElementById('timeline-view');
+    const carouselView = document.getElementById('carousel-view');
+    
     const totalCards = concerts.length;
     let currentAngle = 0;
     let radius = 0;
 
-    // 动态计算 3D 旋转半径 (屏幕越窄，半径越小，防止出界)
+    // 1. 初始化时间轴
+    function initTimeline() {
+        timelineContainer.innerHTML = '';
+        concerts.forEach((concert, index) => {
+            const item = document.createElement('div');
+            item.className = 'timeline-item';
+            // 点击跳转到对应的 3D 卡片
+            item.onclick = () => showCarousel(index);
+            
+            item.innerHTML = `
+                <div class="timeline-content">
+                    <div class="timeline-date">${concert.date}</div>
+                    <div class="timeline-artist">${concert.artist}</div>
+                    <div class="timeline-location">📍 ${concert.location}</div>
+                </div>
+            `;
+            timelineContainer.appendChild(item);
+        });
+    }
+
+    // 2. 初始化 3D 舞台
     function calcRadius() {
-        // 获取实际设备宽度
         const screenWidth = window.innerWidth;
-        // 估算当前卡片宽度
         const cardWidth = screenWidth < 400 ? 220 : Math.min(screenWidth * 0.7, 300);
-        // 手机端让卡片紧凑一点，电脑端拉开距离
         const padding = screenWidth < 768 ? 60 : 130; 
         return Math.round((cardWidth / 2) / Math.tan(Math.PI / totalCards)) + padding;
     }
 
-    function init() {
+    function initCarousel() {
         carousel.innerHTML = ''; 
         radius = calcRadius();
 
@@ -154,17 +240,11 @@
             const card = document.createElement('div');
             card.className = 'card';
             const angle = i * (360 / totalCards);
-            
             card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
 
             let mediaHTML = '';
-            // 智能判断图片还是视频
             if (concert.photo && concert.photo.toLowerCase().endsWith('.mp4')) {
-                // playsinline 确保在苹果手机上不会自动全屏
-                mediaHTML = `
-                    <video class="card-photo" autoplay loop muted playsinline>
-                        <source src="${concert.photo}" type="video/mp4">
-                    </video>`;
+                mediaHTML = `<video class="card-photo" autoplay loop muted playsinline><source src="${concert.photo}" type="video/mp4"></video>`;
             } else if (concert.photo) {
                 mediaHTML = `<div class="card-photo" style="background-image: url('${concert.photo}')"></div>`;
             } else {
@@ -175,10 +255,7 @@
                 ${mediaHTML}
                 <div class="card-info">
                     <div class="artist">${concert.artist}</div>
-                    <div class="details">
-                        <span class="date">${concert.date}</span> · 
-                        <span class="location">${concert.location}</span>
-                    </div>
+                    <div class="details"><span class="date">${concert.date}</span> · <span class="location">${concert.location}</span></div>
                 </div>
             `;
             carousel.appendChild(card);
@@ -186,11 +263,43 @@
         applyTransform();
     }
 
+    // 3. 视图切换控制
+    function showCarousel(targetIndex) {
+        // 隐藏时间轴，显示舞台
+        timelineView.style.opacity = '0';
+        setTimeout(() => {
+            timelineView.style.display = 'none';
+            carouselView.style.display = 'flex';
+            
+            // 计算并旋转到被点击的那场演唱会
+            currentAngle = -targetIndex * (360 / totalCards);
+            applyTransform();
+
+            // 加入一点淡入放大的动画效果
+            setTimeout(() => {
+                carouselView.style.opacity = '1';
+                carouselView.style.transform = 'scale(1)';
+            }, 50);
+        }, 300); // 等待淡出动画结束
+    }
+
+    function showTimeline() {
+        // 隐藏舞台，返回时间轴
+        carouselView.style.opacity = '0';
+        carouselView.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            carouselView.style.display = 'none';
+            timelineView.style.display = 'block';
+            setTimeout(() => timelineView.style.opacity = '1', 50);
+        }, 300);
+    }
+
+    // 4. 旋转控制
     function nextCard() { currentAngle -= 360 / totalCards; applyTransform(); }
     function prevCard() { currentAngle += 360 / totalCards; applyTransform(); }
     function applyTransform() { carousel.style.transform = `rotateY(${currentAngle}deg)`; }
 
-    // 监听屏幕旋转或窗口缩放，重新计算布局
+    // 监听屏幕尺寸变化
     window.addEventListener('resize', () => {
         radius = calcRadius();
         const cards = document.querySelectorAll('.card');
@@ -200,17 +309,22 @@
         });
     });
 
-    init();
-    
-    // 手机端左右滑屏支持
+    // 手机端滑屏控制
     let startX = 0;
-    window.addEventListener('touchstart', (e) => startX = e.touches[0].clientX);
+    window.addEventListener('touchstart', (e) => {
+        if(carouselView.style.display === 'flex') startX = e.touches[0].clientX;
+    });
     window.addEventListener('touchend', (e) => {
+        if(carouselView.style.display !== 'flex') return; // 如果在时间轴视图，不触发 3D 旋转
         const endX = e.changedTouches[0].clientX;
         if(Math.abs(startX - endX) < 40) return; 
         if(endX < startX) nextCard();
         else prevCard();
     });
+
+    // 启动渲染
+    initTimeline();
+    initCarousel();
 </script>
 </body>
 </html>
