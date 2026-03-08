@@ -5,39 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>我的演唱会回忆录</title>
     <style>
-        /* ===== 1. 基础极简风设置 ===== */
+        /* ===== 1. 未来科技基础设置 ===== */
         body {
             margin: 0; padding: 0;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: #262626; overflow: hidden; height: 100vh;
+            background: #050505; /* 纯黑背景 */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #dcdcdc; overflow: hidden; height: 100vh;
         }
 
-        /* ===== 2. 全局导航栏 (高斯模糊) ===== */
+        /* ===== 2. 全局导航栏 (全息风格) ===== */
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05);
+            background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,255,255,0.2);
             display: flex; justify-content: space-between; align-items: center;
             z-index: 1000; padding: 0 20px; box-sizing: border-box;
         }
         .nav-links { display: flex; gap: 20px; }
         .nav-link {
-            font-size: 0.95rem; font-weight: 600; color: #8e8e8e; cursor: pointer;
+            font-size: 0.95rem; font-weight: 600; color: rgba(0,255,255,0.5); cursor: pointer;
             transition: color 0.3s;
         }
-        .nav-link.active { color: #262626; border-bottom: 2px solid #262626; padding-bottom: 2px; }
-        .nav-link:hover { color: #262626; }
+        .nav-link.active { color: rgba(220, 39, 67, 1); border-bottom: 2px solid rgba(220, 39, 67, 1); padding-bottom: 2px; }
+        .nav-link:hover { color: rgba(0,255,255,1); }
         
         /* 音乐播放按钮 */
         .music-btn {
             width: 36px; height: 36px; border-radius: 50%;
-            background: #fff; border: 1px solid #eaeaea; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: transparent; border: 1px solid rgba(0,255,255,0.2); 
             display: flex; justify-content: center; align-items: center;
             cursor: pointer; font-size: 1.1rem; transition: transform 0.3s;
         }
-        /* 播放时的旋转动画 */
-        .music-btn.playing { animation: spin 4s linear infinite; border-color: #262626; }
+        .music-btn.playing { animation: spin 4s linear infinite; border-color: rgba(220, 39, 67, 1); }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* ===== 3. 公共视图样式 ===== */
@@ -49,49 +48,65 @@
         }
         .view-layer.active { display: block; opacity: 1; transform: translateY(0); }
 
-        /* ===== 4. 首页 (Home View) ===== */
+        /* ===== 4. 首页 (Future Home) ===== */
         #home-view { display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translateY(20px); }
+        
+        /* 创作者署名面板 */
+        .home-profile { 
+            background: transparent; padding: 20px 30px; border-radius: 20px; 
+            border: 1px solid rgba(0,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(0,255,255,0.05); text-align: center; margin-bottom: 20px;
+        }
+        .home-num { font-size: 2rem; font-weight: 800; color: #262626; }
+        .home-label { font-size: 0.8rem; color: #8e8e8e; margin-top: 5px; }
+
         .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 800; letter-spacing: -1px; text-align: center; margin-bottom: 10px;}
         .hero-subtitle { font-size: 1rem; color: #8e8e8e; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 40px; }
         
         .stats-container { display: flex; gap: 30px; margin-bottom: 50px; text-align: center; }
-        .stat-box { background: #fff; padding: 20px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
-        .stat-num { font-size: 2rem; font-weight: 800; color: #262626; }
-        .stat-label { font-size: 0.8rem; color: #8e8e8e; margin-top: 5px; }
+        .stat-box { background: transparent; padding: 20px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        .stat-num { font-size: 2rem; font-weight: 800; color: rgba(0,255,255,1); }
+        .stat-label { font-size: 0.8rem; color: rgba(220, 39, 67, 1); margin-top: 5px; }
 
         .start-btn {
-            padding: 15px 40px; background: #262626; color: #fff; border: none;
+            padding: 15px 40px; background: rgba(0,255,255,1); color: #000; border: none;
             border-radius: 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer;
-            box-shadow: 0 8px 20px rgba(38, 38, 38, 0.3); transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3); transition: transform 0.2s, box-shadow 0.2s;
         }
-        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(38, 38, 38, 0.4); }
+        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0, 255, 255, 0.4); }
 
-        /* ===== 5. 时间轴视图 (Timeline View) ===== */
+        /* ===== 5. Cyber 时间轴 (Cyber Timeline) ===== */
         .timeline-header { text-align: center; padding: 40px 20px 10px; }
-        .timeline-header h1 { margin: 0; font-size: 2rem; font-weight: 800; }
+        .timeline-header h1 { margin: 0; font-size: 2rem; font-weight: 800; color: rgba(0,255,255,1); }
         .timeline-container { position: relative; max-width: 600px; margin: 20px auto 50px; padding: 0 20px; }
-        .timeline-container::after { content: ''; position: absolute; width: 2px; background: #e0e0e0; top: 0; bottom: 0; left: 40px; }
+        .timeline-container::after { content: ''; position: absolute; width: 2px; background: rgba(0,255,255,0.2); top: 0; bottom: 0; left: 40px; }
         
         .timeline-item { position: relative; margin: 35px 0; padding-left: 60px; cursor: pointer; transition: transform 0.3s; }
         .timeline-item:hover { transform: translateY(-5px); }
         .timeline-item::before {
             content: ''; position: absolute; width: 14px; height: 14px; 
-            background: linear-gradient(45deg, #f09433 0%, #dc2743 50%, #bc1888 100%);
-            border: 3px solid #fff; border-radius: 50%; left: 31px; top: 15px;
-            box-shadow: 0 2px 8px rgba(220, 39, 67, 0.3); z-index: 1;
+            background: rgba(0,255,255,1);
+            border: 3px solid #000; border-radius: 50%; left: 31px; top: 15px;
+            box-shadow: 0 2px 8px rgba(0, 255, 255, 0.3); z-index: 1;
         }
-        .timeline-content { background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+        .timeline-content { background: #000; border: 1px solid rgba(0,255,255,0.2); border-radius: 16px; padding: 18px 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
         .timeline-date { color: #8e8e8e; font-size: 0.85rem; font-weight: 500; margin-bottom: 6px; }
         .timeline-artist { font-size: 1.3rem; font-weight: bold; }
         .timeline-location { color: #a8a8a8; font-size: 0.85rem; margin-top: 6px; }
 
-        /* ===== 6. 3D 旋转舞台 (Carousel View) ===== */
-        #carousel-view { display: none; overflow: hidden; } /* 覆盖上面的 block 设为 flex 由 JS 控制 */
+        /* 全息地图插画插件 */
+        .map-inset { position: absolute; right: -250px; top: 0; width: 200px; height: 150px; }
+        #china-map { width: 100%; height: 100%; }
+        #china-map .land { fill: none; stroke: rgba(0,255,255,0.2); stroke-width: 1.5; }
+        #china-map .city-point { fill: rgba(220, 39, 67, 1); stroke: #000; stroke-width: 1; }
+
+        /* ===== 6. Holographic Gallery (Holographic Gallery) ===== */
+        #carousel-view { display: none; overflow: hidden; } 
         .back-btn {
             position: absolute; top: 20px; left: 20px; z-index: 200;
-            padding: 10px 20px; background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #eaeaea; border-radius: 30px; color: #262626;
-            font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 10px 20px; background: rgba(5, 5, 5, 0.8);
+            border: 1px solid rgba(0,255,255,0.5); border-radius: 30px; color: rgba(0,255,255,1);
+            font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,255,255,0.1);
         }
         .container { width: 100%; height: 60vh; margin-top: 5vh; perspective: 1500px; display: flex; align-items: center; justify-content: center; }
         .carousel { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1); }
@@ -100,28 +115,29 @@
             position: absolute; width: clamp(240px, 70vw, 320px); height: clamp(340px, 55vh, 440px);
             left: 50%; top: 50%; transform-origin: center;
             margin-left: calc(-1 * clamp(240px, 70vw, 320px) / 2); margin-top: calc(-1 * clamp(340px, 55vh, 440px) / 2);
-            background: #ffffff; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            background: #000; border: 1px solid rgba(0,255,255,0.2); border-radius: 20px; box-shadow: 0 15px 35px rgba(0,255,255,0.1);
             display: flex; flex-direction: column; padding: 12px; box-sizing: border-box; backface-visibility: hidden;
         }
-        .card-photo { width: 100%; height: 70%; background-size: cover; background-position: center; border-radius: 12px; background-color: #f8f9fa; }
-        .card-photo.no-photo { display: flex; align-items: center; justify-content: center; color: #dcdcdc; font-size: 3em; }
+        .card-photo { width: 100%; height: 70%; background-size: cover; background-position: center; border-radius: 12px; background-color: #050505; }
+        .card-photo.no-photo { display: flex; align-items: center; justify-content: center; color: rgba(0,255,255,0.2); font-size: 3em; }
         .card-info { padding: 15px 5px 5px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;}
-        .artist { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+        .artist { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; color: rgba(0,255,255,1); }
         .details { font-size: 0.85rem; color: #8e8e8e; }
 
         .nav-buttons { position: absolute; bottom: 8vh; left: 0; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 100; }
-        .nav-buttons button { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.9); border: 1px solid #eaeaea; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .nav-buttons button { width: 50px; height: 50px; border-radius: 50%; background: rgba(5,5,5,0.9); border: 1px solid rgba(0,255,255,0.2); font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,255,255,0.1); color: rgba(0,255,255,1); }
 
-        /* ===== 7. 关于页面 (About View) ===== */
+        /* ===== 7. 系统关于 (About View) ===== */
         #about-view { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .about-quote { font-size: clamp(1.2rem, 4vw, 1.5rem); font-weight: 600; line-height: 1.6; color: #262626; max-width: 600px; margin-bottom: 30px; position: relative;}
-        .about-quote::before { content: '“'; font-size: 4rem; color: #e0e0e0; position: absolute; top: -20px; left: -20px; z-index: -1;}
+        
+        .about-quote { font-size: clamp(1.2rem, 4vw, 1.5rem); font-weight: 600; line-height: 1.6; color: #dcdcdc; max-width: 600px; margin-bottom: 30px; position: relative;}
+        .about-quote::before { content: '“'; font-size: 4rem; color: rgba(0,255,255,0.2); position: absolute; top: -20px; left: -20px; z-index: -1;}
         .about-text { color: #8e8e8e; font-size: 0.95rem; line-height: 1.8; max-width: 500px; }
 
         /* 极简滚动条 */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #dcdcdc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,255,255,0.2); border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -131,43 +147,61 @@
 <nav class="navbar">
     <div class="nav-links">
         <div class="nav-link active" onclick="switchView('home-view', this)">首 页</div>
-        <div class="nav-link" onclick="switchView('timeline-view', this)">光芒轨迹</div>
-        <div class="nav-link" onclick="switchView('about-view', this)">关于热爱</div>
+        <div class="nav-link" onclick="switchView('timeline-view', this)">轨迹矩阵</div>
+        <div class="nav-link" onclick="switchView('about-view', this)">系统关于</div>
     </div>
-    <div class="music-btn" id="music-btn" onclick="toggleMusic()" title="播放/暂停音乐">🎵</div>
+    <div class="music-btn" id="music-btn" onclick="toggleMusic()" title="INITIATE/PAUSE BGM">🎵</div>
 </nav>
 
 <div id="home-view" class="view-layer active" style="display: flex;">
-    <div class="hero-title">Concert<br>Memories</div>
-    <div class="hero-subtitle">My Live Music Journey</div>
+    
+    <div class="home-profile" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <img src="phtotos/me.jpg" alt="Creator" style="width: 100px; height: 100px; border-radius: 50%; border: 2px solid rgba(0,255,255,0.8); object-fit: cover; box-shadow: 0 0 20px rgba(0,255,255,0.4);">
+        <div>
+            <div class="stat-num" style="font-size: 1.5rem; color: rgba(0,255,255,1);">ZHOU YATING</div>
+            <div class="stat-label" style="color: rgba(220, 39, 67, 1);">CREATOR / MATRIX OWNER</div>
+        </div>
+    </div>
+
+    <div class="hero-title">Concert<br>MATRIX</div>
+    <div class="hero-subtitle">My Live Music Archive</div>
     
     <div class="stats-container">
         <div class="stat-box">
             <div class="stat-num">14</div>
-            <div class="stat-label">场次点亮</div>
+            <div class="stat-label">点亮光芒</div>
         </div>
         <div class="stat-box">
             <div class="stat-num">3</div>
-            <div class="stat-label">跨越城市</div>
+            <div class="stat-label">MATRIX CITIES</div>
         </div>
         <div class="stat-box">
             <div class="stat-num">12</div>
-            <div class="stat-label">见证歌手</div>
+            <div class="stat-label">MATRIX ARTISTS</div>
         </div>
     </div>
 
-    <button class="start-btn" onclick="startJourney()">开启时光机</button>
+    <button class="start-btn" onclick="startJourney()">ENTER MEMORY MATRIX</button>
 </div>
 
 <div id="timeline-view" class="view-layer">
     <div class="timeline-header">
         <h1>轨迹</h1>
     </div>
-    <div class="timeline-container" id="timeline-container"></div>
+    <div class="timeline-container" id="timeline-container">
+        <div class="map-inset">
+            <svg id="china-map" viewBox="0 0 1000 800">
+                <path class="land" d="M371,326l-14,8.1L343.3,313.4l-31,23.1L272.5,299l-13,25l-20-13l-34.8,22l-12-14.8L111,364.6l-15,13L87,364l-26,20L53,365.1l-25.1,19.2l12.1,33.1L30,442.2l10-18l19,10l-12,21.1l20,11.2l-21,17l36,25.1L82.1,514.2l-14.1,28L98,552l-11,27.1l32,22.1l-14,24l40,31.2l-12,18l24,20l-17,29l29,20.2l-15.1,23L211,768l-22.1,31l32.1,25l-14.1,23L268,881l-13.1,22l32,32.2l-14,23.1l40,31l-10,21l24,20.1l-12,23l24,20l-15.1,23L411,1088l-18.1,21l32.1,31l-14.1,23L468,1201l-11.1,27.1l40,31.2l-12,21.1l24,20l-17,29l29,20.2l-15.1,23L561,1368l-22.1,31l32.1,25l-14.1,23L618,1481l-13.1,22l32,32.2l-14,23.1l40,31l-10,21l24,20.1l-12,23l24,20l-15.1,23L761,1688l-18.1,21l32.1,31l-14.1,23L818,1801l-11.1,27.1l40,31.2l-12,21.1l24,20l-17,29l29,20.2l-15.1,23L911,1968l-22.1,31l32.1,25l-14.1,23L968,2081l-13.1,22l32,32.2l-14,23.1l40,31l-10,21l24,20.1l-12,23l24,20l-15.1,23Z"/>
+                <circle class="city-point" id="beijing" cx="116.4" cy="39.9" r="6"/>
+                <circle class="city-point" id="qingdao" cx="120.38" cy="36.06" r="6"/>
+                <circle class="city-point" id="yichang" cx="111.29" cy="30.7" r="6"/>
+            </svg>
+        </div>
+    </div>
 </div>
 
 <div id="carousel-view" class="view-layer" style="display: none;">
-    <button class="back-btn" onclick="backToTimeline()">← 返回轨迹</button>
+    <button class="back-btn" onclick="backToTimeline()">◀ RETRIEVE 轨迹矩阵</button>
     <div class="container">
         <div class="carousel" id="carousel"></div>
     </div>
@@ -178,6 +212,15 @@
 </div>
 
 <div id="about-view" class="view-layer">
+    
+    <div class="about-profile stat-box" style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 30px; background: rgba(255,255,255,0.05); border: 1px solid rgba(220, 39, 67, 0.3);">
+        <img src="phtotos/me.jpg" alt="Creator" style="width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(220, 39, 67, 0.8); object-fit: cover; box-shadow: 0 0 25px rgba(220, 39, 67, 0.5);">
+        <div>
+            <div class="stat-num" style="font-size: 1.8rem; color: #fff;">ZHOU YATING</div>
+            <div class="stat-label" style="color: rgba(220, 39, 67, 1);">MATRIX CREATOR / SYSTEM OWNER</div>
+        </div>
+    </div>
+
     <div class="about-quote">
         耳机里的声音<br>终有一天要站在台上听
     </div>
@@ -207,30 +250,25 @@
 
     // --- 页面导航切换逻辑 ---
     function switchView(viewId, navElement) {
-        // 更新导航栏下划线
         if(navElement) {
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
             navElement.classList.add('active');
         }
 
-        // 隐藏所有视图
         document.querySelectorAll('.view-layer').forEach(view => {
             view.style.opacity = '0';
             view.style.transform = 'translateY(20px)';
             setTimeout(() => {
                 view.style.display = 'none';
                 view.classList.remove('active');
-            }, 300); // 等待淡出动画
+            }, 300); 
         });
 
-        // 显示目标视图
         setTimeout(() => {
             const targetView = document.getElementById(viewId);
-            // 3D 舞台使用 flex，其他使用 block 或 首页的 flex
             targetView.style.display = (viewId === 'home-view' || viewId === 'about-view') ? 'flex' : 'block';
             targetView.classList.add('active');
             
-            // 触发回弹动画
             setTimeout(() => {
                 targetView.style.opacity = '1';
                 targetView.style.transform = 'translateY(0)';
@@ -238,12 +276,9 @@
         }, 300);
     }
 
-    // 从首页点击“开启时光机”
+    // 从首页点击“进入回忆矩阵”
     function startJourney() {
-        // 如果音乐没播放，自动尝试播放 BGM（带来惊喜感！）
         if(!isPlaying) toggleMusic(); 
-        
-        // 切换到时间轴，并高亮导航栏
         const timelineNav = document.querySelectorAll('.nav-link')[1];
         switchView('timeline-view', timelineNav);
     }
@@ -330,7 +365,6 @@
         applyTransform();
     }
 
-    // 从时间轴进入 3D 舞台
     function showCarousel(targetIndex) {
         timelineView.style.opacity = '0';
         setTimeout(() => {
@@ -345,7 +379,6 @@
         }, 300);
     }
 
-    // 从 3D 舞台退回时间轴
     function backToTimeline() {
         carouselView.style.opacity = '0';
         setTimeout(() => {
@@ -380,7 +413,6 @@
         else prevCard();
     });
 
-    // 初始化渲染
     initTimeline();
     initCarousel();
 </script>
