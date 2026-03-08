@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <title>我的演唱会足迹地图</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
     <style>
         body { margin: 0; background-color: #1a1a1a; color: #fff; font-family: sans-serif; overflow: hidden; }
         #main { width: 100vw; height: 100vh; }
         .title { position: absolute; top: 20px; left: 20px; z-index: 10; pointer-events: none; }
         h1 { margin: 0; font-size: 24px; color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
-        p { color: #ccc; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -23,30 +23,23 @@
 <script>
     const chart = echarts.init(document.getElementById('main'));
 
-    // 城市坐标
+    // 坐标数据
     const geoCoordMap = {
         '北京': [116.405285, 39.904989],
         '宜昌': [111.290843, 30.702636],
         '青岛': [120.38264, 36.067082]
     };
 
-    // 演唱会数据
     const concertData = [
         { name: '宜昌', value: [{ date: '2023.07.08', artist: '林志炫' }] },
         { name: '青岛', value: [{ date: '2024.06.16', artist: '邓紫棋' }] },
         { name: '北京', value: [
-            { date: '2024.09.21', artist: '袁娅维' },
-            { date: '2024.09.22', artist: '周深' },
-            { date: '2024.10.05', artist: '国潮星动' },
-            { date: '2025.03.23', artist: '汪苏泷' },
-            { date: '2025.03.30', artist: '林志炫' },
-            { date: '2025.04.18', artist: '张杰' },
-            { date: '2025.04.20', artist: '李健' },
-            { date: '2025.06.01', artist: '凤凰传奇' },
-            { date: '2025.07.27', artist: '五月天' },
-            { date: '2025.08.15', artist: '王心凌' },
-            { date: '2025.09.20', artist: '刘雨昕' },
-            { date: '2025.09.27', artist: '胡夏' }
+            { date: '2024.09.21', artist: '袁娅维' }, { date: '2024.09.22', artist: '周深' },
+            { date: '2024.10.05', artist: '国潮星动' }, { date: '2025.03.23', artist: '汪苏泷' },
+            { date: '2025.03.30', artist: '林志炫' }, { date: '2025.04.18', artist: '张杰' },
+            { date: '2025.04.20', artist: '李健' }, { date: '2025.06.01', artist: '凤凰传奇' },
+            { date: '2025.07.27', artist: '五月天' }, { date: '2025.08.15', artist: '王心凌' },
+            { date: '2025.09.20', artist: '刘雨昕' }, { date: '2025.09.27', artist: '胡夏' }
         ]}
     ];
 
@@ -56,50 +49,38 @@
         details: item.value
     }));
 
-    // 使用阿里云地图源，国内访问极速
-    fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
+    // 使用你提供的 TopoJSON 接口
+    fetch('https://geojson.cn/api/china/1.6.3/china.topo.json')
     .then(res => res.json())
-    .then(chinaJson => {
-        echarts.registerMap('china', chinaJson);
+    .then(topoData => {
+        // 将 TopoJSON 转换为 ECharts 能识别的 GeoJSON
+        const geoJson = topojson.feature(topoData, topoData.objects.levels);
+        echarts.registerMap('china', geoJson);
+
         chart.setOption({
             tooltip: {
                 trigger: 'item',
-                backgroundColor: 'rgba(0,0,0,0.9)',
-                borderColor: '#ffd700',
-                borderWidth: 1,
-                textStyle: { color: '#fff' },
+                backgroundColor: 'rgba(0,0,0,0.8)',
                 formatter: params => {
                     if(!params.data) return '';
-                    let res = `<b style="color:#ffd700;font-size:16px;">${params.name}</b><br/>`;
-                    params.data.details.forEach(it => {
-                        res += `<span style="color:#aaa">${it.date}</span> - ${it.artist}<br/>`;
-                    });
+                    let res = `<b style="color:#ffd700">${params.name}</b><br/>`;
+                    params.data.details.forEach(it => res += `${it.date} ${it.artist}<br/>`);
                     return res;
                 }
             },
             geo: {
                 map: 'china',
                 roam: true,
-                zoom: 1.2,
-                label: { emphasis: { show: false } },
-                itemStyle: {
-                    areaColor: '#242d39',
-                    borderColor: '#404a59',
-                    borderWidth: 1
-                },
-                emphasis: {
-                    itemStyle: { areaColor: '#1a222c' }
-                }
+                itemStyle: { areaColor: '#242d39', borderColor: '#404a59' },
+                emphasis: { itemStyle: { areaColor: '#1a222c' }, label: { show: false } }
             },
             series: [{
                 type: 'effectScatter',
                 coordinateSystem: 'geo',
                 data: convertData(concertData),
-                symbolSize: val => Math.max(val[2] * 4, 12), // 动态调整点的大小
-                showEffectOn: 'render',
-                rippleEffect: { brushType: 'stroke', scale: 3 },
-                label: { show: true, formatter: '{b}', position: 'right', color: '#fff' },
-                itemStyle: { color: '#ffd700', shadowBlur: 10, shadowColor: '#ffd700' }
+                symbolSize: val => Math.max(val[2] * 4, 12),
+                itemStyle: { color: '#ffd700' },
+                label: { show: true, formatter: '{b}', position: 'right', color: '#fff' }
             }]
         });
     });
