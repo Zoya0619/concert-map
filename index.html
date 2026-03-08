@@ -49,7 +49,12 @@
         .view-layer.active { display: block; opacity: 1; transform: translateY(0); }
 
         /* ===== 4. 首页 (Future Home) ===== */
-        #home-view { display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translateY(20px); }
+        /* 修复了居中导致的顶部裁切问题，改为 flex-start 并增加顶部内边距 */
+        #home-view { 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: flex-start; padding-top: 6vh; padding-bottom: 40px;
+            transform: translateY(20px); 
+        }
         
         /* 创作者署名面板 */
         .home-profile { 
@@ -75,7 +80,7 @@
         }
         .start-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0, 255, 255, 0.4); }
 
-        /* ===== 5. Cyber 时间轴 (Cyber Timeline) ===== */
+        /* ===== 5. 光芒轨迹 (Timeline) ===== */
         .timeline-header { text-align: center; padding: 40px 20px 10px; }
         .timeline-header h1 { margin: 0; font-size: 2rem; font-weight: 800; color: rgba(0,255,255,1); }
         .timeline-container { position: relative; max-width: 600px; margin: 20px auto 50px; padding: 0 20px; }
@@ -100,7 +105,7 @@
         #china-map .land { fill: none; stroke: rgba(0,255,255,0.2); stroke-width: 1.5; }
         #china-map .city-point { fill: rgba(220, 39, 67, 1); stroke: #000; stroke-width: 1; }
 
-        /* ===== 6. Holographic Gallery (Holographic Gallery) ===== */
+        /* ===== 6. 3D 舞台 (Holographic Gallery) ===== */
         #carousel-view { display: none; overflow: hidden; } 
         .back-btn {
             position: absolute; top: 20px; left: 20px; z-index: 200;
@@ -127,9 +132,10 @@
         .nav-buttons { position: absolute; bottom: 8vh; left: 0; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 100; }
         .nav-buttons button { width: 50px; height: 50px; border-radius: 50%; background: rgba(5,5,5,0.9); border: 1px solid rgba(0,255,255,0.2); font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,255,255,0.1); color: rgba(0,255,255,1); }
 
-        /* ===== 7. 系统关于 (About View) ===== */
+        /* ===== 7. 关于热爱 (About View) ===== */
         #about-view { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
         
+        .about-profile { background: rgba(255,255,255,0.05); padding: 20px 30px; border-radius: 20px; border: 1px solid rgba(220, 39, 67, 0.3); text-align: center; margin-bottom: 30px; }
         .about-quote { font-size: clamp(1.2rem, 4vw, 1.5rem); font-weight: 600; line-height: 1.6; color: #dcdcdc; max-width: 600px; margin-bottom: 30px; position: relative;}
         .about-quote::before { content: '“'; font-size: 4rem; color: rgba(0,255,255,0.2); position: absolute; top: -20px; left: -20px; z-index: -1;}
         .about-text { color: #8e8e8e; font-size: 0.95rem; line-height: 1.8; max-width: 500px; }
@@ -146,9 +152,9 @@
 
 <nav class="navbar">
     <div class="nav-links">
-        <div class="nav-link active" onclick="switchView('home-view', this)">首 页</div>
-        <div class="nav-link" onclick="switchView('timeline-view', this)">轨迹矩阵</div>
-        <div class="nav-link" onclick="switchView('about-view', this)">系统关于</div>
+        <div class="nav-link active" onclick="switchView('home-view', this)">首页</div>
+        <div class="nav-link" onclick="switchView('timeline-view', this)">光芒轨迹</div>
+        <div class="nav-link" onclick="switchView('about-view', this)">关于热爱</div>
     </div>
     <div class="music-btn" id="music-btn" onclick="toggleMusic()" title="INITIATE/PAUSE BGM">🎵</div>
 </nav>
@@ -201,7 +207,7 @@
 </div>
 
 <div id="carousel-view" class="view-layer" style="display: none;">
-    <button class="back-btn" onclick="backToTimeline()">◀ RETRIEVE 轨迹矩阵</button>
+    <button class="back-btn" onclick="backToTimeline()">◀ 返回光芒轨迹</button>
     <div class="container">
         <div class="carousel" id="carousel"></div>
     </div>
@@ -213,7 +219,7 @@
 
 <div id="about-view" class="view-layer">
     
-    <div class="about-profile stat-box" style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 30px; background: rgba(255,255,255,0.05); border: 1px solid rgba(220, 39, 67, 0.3);">
+    <div class="about-profile" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
         <img src="phtotos/me.jpg" alt="Creator" style="width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(220, 39, 67, 0.8); object-fit: cover; box-shadow: 0 0 25px rgba(220, 39, 67, 0.5);">
         <div>
             <div class="stat-num" style="font-size: 1.8rem; color: #fff;">ZHOU YATING</div>
